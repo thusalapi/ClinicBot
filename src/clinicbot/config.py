@@ -26,6 +26,13 @@ CHUNK_OVERLAP_CHARS = 200
 # --- Retrieval ----------------------------------------------------------------
 # How many chunks to hand to the LLM. More = better recall, but more noise/cost.
 TOP_K = 4
+# Strategy: "vector", "bm25", "hybrid" or "rerank" (see retrieval.py).
+# "rerank" won on our eval set (`uv run clinicbot eval`): best recall@1 and MRR.
+RETRIEVAL_MODE = os.getenv("CLINICBOT_RETRIEVAL", "rerank")
+# How many candidates each first-stage search returns before fusion/reranking.
+CANDIDATES = 20
+# Reciprocal Rank Fusion constant (60 is the value from the original paper).
+RRF_K = 60
 
 # --- Generation ---------------------------------------------------------------
 # LESSON: the "G" in RAG is swappable. Retrieval doesn't care which LLM reads

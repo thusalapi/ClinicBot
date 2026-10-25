@@ -12,3 +12,4 @@ wheels/
 # Secrets and generated data
 .env
 data/vectordb/
+data/models/

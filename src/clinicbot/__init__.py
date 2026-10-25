@@ -1,17 +1,21 @@
 """ClinicBot command line.
 
-    uv run clinicbot ingest          # chunk + embed + store the docs
-    uv run clinicbot chunks          # print the chunks (inspect your chunking)
-    uv run clinicbot search "query"  # retrieval only, no LLM (free!)
-    uv run clinicbot ask "question"  # full RAG: retrieve + generate
-    uv run clinicbot chat            # interactive loop
+    uv run clinicbot ingest                 # chunk + embed + store the docs
+    uv run clinicbot chunks                 # print the chunks (inspect your chunking)
+    uv run clinicbot search "query"         # retrieval only, no LLM (free!)
+    uv run clinicbot search "q" --mode bm25 # try another retrieval strategy
+    uv run clinicbot ask "question"         # full RAG: retrieve + generate
+    uv run clinicbot chat                   # interactive loop
+    uv run clinicbot eval                   # score retrieval for every mode
+    uv run clinicbot eval --answers         # score final answers (runs the LLM)
 """
 
 import argparse
 
 from clinicbot import store
 from clinicbot.chunking import chunk_directory
-from clinicbot.config import DOCS_DIR, TOP_K
+from clinicbot.config import DOCS_DIR, RETRIEVAL_MODE, TOP_K
+from clinicbot.retrieval import MODES, retrieve
 
 
 def cmd_ingest(_args) -> None:
@@ -30,25 +34,25 @@ def cmd_chunks(_args) -> None:
 
 
 def cmd_search(args) -> None:
-    for i, r in enumerate(store.search(args.query, args.k), start=1):
-        print(f"[{i}] distance={r.distance:.3f}  {r.source}  ::  {r.section}")
+    for i, r in enumerate(retrieve(args.query, args.k, args.mode), start=1):
+        print(f"[{i}] score={r.score:.3f}  {r.source}  ::  {r.section}")
         print("    " + r.text.replace("\n", "\n    ")[:400])
         print()
 
 
-def ask(question: str, k: int, show_sources: bool) -> None:
+def ask(question: str, args) -> None:
     from clinicbot.generate import answer  # imported lazily: only needed for ask/chat
 
-    results = store.search(question, k)
+    results = retrieve(question, args.k, args.mode)
     print(answer(question, results))
-    if show_sources:
+    if args.sources:
         print("\nSources:")
         for i, r in enumerate(results, start=1):
-            print(f"  [{i}] {r.source} :: {r.section} (distance {r.distance:.3f})")
+            print(f"  [{i}] {r.source} :: {r.section} (score {r.score:.3f})")
 
 
 def cmd_ask(args) -> None:
-    ask(args.question, args.k, args.sources)
+    ask(args.question, args)
 
 
 def cmd_chat(args) -> None:
@@ -62,7 +66,17 @@ def cmd_chat(args) -> None:
             break
         if question:
             print("bot> ", end="")
-            ask(question, args.k, args.sources)
+            ask(question, args)
+
+
+def cmd_eval(args) -> None:
+    from clinicbot import evaluate
+
+    if args.answers:
+        evaluate.eval_answers(args.k, args.mode)
+    else:
+        modes = [args.only] if args.only else list(MODES)
+        evaluate.eval_retrieval(args.k, modes, args.misses)
 
 
 def main() -> None:
@@ -72,18 +86,29 @@ def main() -> None:
     sub.add_parser("ingest").set_defaults(func=cmd_ingest)
     sub.add_parser("chunks").set_defaults(func=cmd_chunks)
 
+    def add_retrieval_args(p):
+        p.add_argument("-k", type=int, default=TOP_K)
+        p.add_argument("--mode", choices=MODES, default=RETRIEVAL_MODE)
+
     p = sub.add_parser("search")
     p.add_argument("query")
-    p.add_argument("-k", type=int, default=TOP_K)
+    add_retrieval_args(p)
     p.set_defaults(func=cmd_search)
 
     for name, func in (("ask", cmd_ask), ("chat", cmd_chat)):
         p = sub.add_parser(name)
         if name == "ask":
             p.add_argument("question")
-        p.add_argument("-k", type=int, default=TOP_K)
+        add_retrieval_args(p)
         p.add_argument("--sources", action="store_true", help="show retrieved chunks")
         p.set_defaults(func=func)
+
+    p = sub.add_parser("eval")
+    add_retrieval_args(p)
+    p.add_argument("--answers", action="store_true", help="grade final answers (slow)")
+    p.add_argument("--only", choices=MODES, help="evaluate a single mode")
+    p.add_argument("--misses", choices=MODES, help="list failed questions for a mode")
+    p.set_defaults(func=cmd_eval)
 
     args = parser.parse_args()
     args.func(args)

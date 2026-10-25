@@ -18,10 +18,14 @@ from clinicbot.embeddings import embed
 
 @dataclass
 class SearchResult:
+    id: str
     text: str
     source: str
     section: str
-    distance: float
+    # Higher = more relevant. What the number means depends on who produced it
+    # (cosine similarity, BM25 score, fusion score, reranker score), so only
+    # compare scores from the same method.
+    score: float
 
 
 def _collection():
@@ -53,13 +57,30 @@ def search(query: str, k: int) -> list[SearchResult]:
     result = _collection().query(query_embeddings=embed([query]), n_results=k)
     return [
         SearchResult(
+            id=chunk_id,
             text=doc,
             source=meta["source"],
             section=meta["section"],
-            distance=dist,
+            score=1 - dist,  # cosine distance -> cosine similarity
         )
-        for doc, meta, dist in zip(
-            result["documents"][0], result["metadatas"][0], result["distances"][0]
+        for chunk_id, doc, meta, dist in zip(
+            result["ids"][0],
+            result["documents"][0],
+            result["metadatas"][0],
+            result["distances"][0],
+        )
+    ]
+
+
+def all_chunks() -> list[SearchResult]:
+    """Every stored chunk (used to build the BM25 keyword index)."""
+    result = _collection().get(include=["documents", "metadatas"])
+    return [
+        SearchResult(
+            id=chunk_id, text=doc, source=meta["source"], section=meta["section"], score=0.0
+        )
+        for chunk_id, doc, meta in zip(
+            result["ids"], result["documents"], result["metadatas"]
         )
     ]
 

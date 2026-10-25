@@ -1,0 +1,41 @@
+{"question": "How much do I pay if I cancel my appointment 5 hours before?", "relevant": ["03_appointments_policy.md::Cancellation"], "answer_must_include": ["500"], "type": "paraphrase"}
+{"question": "What happens if I don't show up for my appointment?", "relevant": ["03_appointments_policy.md::Cancellation"], "answer_must_include": ["1,000"], "type": "paraphrase"}
+{"question": "Rs. 500 fee", "relevant": ["03_appointments_policy.md::Cancellation"], "answer_must_include": ["24 hours"], "type": "keyword"}
+{"question": "What if I'm 20 minutes late?", "relevant": ["03_appointments_policy.md::Late arrival"], "answer_must_include": ["15 minutes"], "type": "paraphrase"}
+{"question": "How early should a new patient come?", "relevant": ["03_appointments_policy.md::Arrival time"], "answer_must_include": ["20 minutes"], "type": "paraphrase"}
+{"question": "Can my 12 year old come to the appointment alone?", "relevant": ["03_appointments_policy.md::Bringing children"], "answer_must_include": ["parent"], "type": "paraphrase"}
+{"question": "Are you open on Sunday?", "relevant": ["01_about_and_hours.md::Opening hours"], "answer_must_include": ["9:00"], "type": "paraphrase"}
+{"question": "Is the clinic open on Poya day?", "relevant": ["01_about_and_hours.md::Opening hours"], "answer_must_include": ["closed"], "type": "keyword"}
+{"question": "Where can I park my car?", "relevant": ["01_about_and_hours.md::Parking"], "answer_must_include": ["behind"], "type": "paraphrase"}
+{"question": "Is there a lift for wheelchair users?", "relevant": ["01_about_and_hours.md::Accessibility"], "answer_must_include": ["lift"], "type": "paraphrase"}
+{"question": "What is the WhatsApp number?", "relevant": ["01_about_and_hours.md::Address and contact"], "answer_must_include": ["077 123 4567"], "type": "keyword"}
+{"question": "Which doctor speaks Tamil and sees children?", "relevant": ["02_doctors.md::Ayesha Fernando"], "answer_must_include": ["Ayesha"], "type": "multi-fact"}
+{"question": "When does Dr. Nimal Perera consult?", "relevant": ["02_doctors.md::Nimal Perera"], "answer_must_include": ["Monday"], "type": "keyword"}
+{"question": "Who can help with my diabetes?", "relevant": ["02_doctors.md::Nimal Perera"], "answer_must_include": ["Nimal"], "type": "paraphrase"}
+{"question": "I hurt my knee playing cricket, which doctor should I see?", "relevant": ["02_doctors.md::Rajiv Kumar"], "answer_must_include": ["Rajiv"], "type": "paraphrase"}
+{"question": "Is there a doctor for pregnancy check-ups?", "relevant": ["02_doctors.md::Shanika Silva"], "answer_must_include": ["Shanika"], "type": "paraphrase"}
+{"question": "How much is a GP consultation?", "relevant": ["04_fees_and_payments.md::Consultation fees"], "answer_must_include": ["2,000"], "type": "paraphrase"}
+{"question": "Do you accept LankaQR?", "relevant": ["04_fees_and_payments.md::Payment methods"], "answer_must_include": ["yes"], "type": "keyword"}
+{"question": "Can I pay with a cheque?", "relevant": ["04_fees_and_payments.md::Payment methods"], "answer_must_include": ["not|don't|no,"], "type": "paraphrase"}
+{"question": "Do you work with AIA insurance?", "relevant": ["04_fees_and_payments.md::Insurance"], "answer_must_include": ["AIA"], "type": "keyword"}
+{"question": "Is there a discount for my 70 year old father?", "relevant": ["04_fees_and_payments.md::Senior citizens"], "answer_must_include": ["10%"], "type": "paraphrase"}
+{"question": "Is there a booking fee if I book by phone?", "relevant": ["04_fees_and_payments.md::Consultation fees"], "answer_must_include": ["300"], "type": "paraphrase"}
+{"question": "What do I need to do before a cholesterol test?", "relevant": ["05_laboratory.md::Fasting blood sugar (FBS) and lipid profile"], "answer_must_include": ["10"], "type": "paraphrase"}
+{"question": "How much is an HbA1c test?", "relevant": ["05_laboratory.md::Common test prices"], "answer_must_include": ["3,200"], "type": "keyword"}
+{"question": "How do I collect a urine sample?", "relevant": ["05_laboratory.md::Urine full report"], "answer_must_include": ["morning"], "type": "paraphrase"}
+{"question": "Can someone come to my house to take blood?", "relevant": ["05_laboratory.md::Home sample collection"], "answer_must_include": ["1,500"], "type": "paraphrase"}
+{"question": "I take thyroxine, when should I do my TSH test?", "relevant": ["05_laboratory.md::Thyroid function"], "answer_must_include": ["before"], "type": "keyword"}
+{"question": "How much is the chickenpox vaccine for my kid?", "relevant": ["06_vaccinations.md::Childhood vaccinations"], "answer_must_include": ["9,500"], "type": "paraphrase"}
+{"question": "When can I get the flu shot?", "relevant": ["06_vaccinations.md::Adult vaccinations"], "answer_must_include": ["March"], "type": "paraphrase"}
+{"question": "I'm travelling to Africa next month, what should I do about vaccines?", "relevant": ["06_vaccinations.md::Travel vaccinations"], "answer_must_include": ["4 weeks"], "type": "paraphrase"}
+{"question": "My son has a fever after his vaccine, is that normal?", "relevant": ["06_vaccinations.md::After your vaccination"], "answer_must_include": ["39"], "type": "paraphrase"}
+{"question": "How much does a root canal cost?", "relevant": ["07_dental_care.md::Services and prices"], "answer_must_include": ["25,000"], "type": "paraphrase"}
+{"question": "Can I drink with a straw after a tooth extraction?", "relevant": ["07_dental_care.md::After an extraction"], "answer_must_include": ["24 hours"], "type": "paraphrase"}
+{"question": "I take warfarin, can I get a tooth pulled?", "relevant": ["07_dental_care.md::Before a dental extraction"], "answer_must_include": ["dentist"], "type": "keyword"}
+{"question": "At what age can my child see the dentist?", "relevant": ["07_dental_care.md::Children's dentistry"], "answer_must_include": ["3"], "type": "paraphrase"}
+{"question": "My father has chest pain right now, what should I do?", "relevant": ["08_emergencies_and_privacy.md::Emergencies"], "answer_must_include": ["1990"], "type": "paraphrase"}
+{"question": "Can I get my blood pressure tablets refilled without seeing the doctor?", "relevant": ["08_emergencies_and_privacy.md::Prescription refills"], "answer_must_include": ["WhatsApp"], "type": "paraphrase"}
+{"question": "Can I get a sick leave certificate for last week?", "relevant": ["08_emergencies_and_privacy.md::Medical certificates"], "answer_must_include": ["2 days"], "type": "paraphrase"}
+{"question": "Can you tell me my test results over the phone?", "relevant": ["08_emergencies_and_privacy.md::Patient privacy"], "answer_must_include": ["NIC"], "type": "paraphrase"}
+{"question": "Do you do MRI scans?", "relevant": [], "answer_must_include": ["011 234 5678"], "type": "unanswerable"}
+{"question": "Do you have a pharmacy that delivers medicines?", "relevant": [], "answer_must_include": ["011 234 5678"], "type": "unanswerable"}
