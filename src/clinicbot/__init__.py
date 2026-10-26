@@ -8,9 +8,12 @@
     uv run clinicbot chat                   # interactive loop
     uv run clinicbot eval                   # score retrieval for every mode
     uv run clinicbot eval --answers         # score final answers (runs the LLM)
+    uv run clinicbot agent                  # Phase 3: agent that can book/cancel
+    uv run clinicbot reset-db               # recreate the mock booking database
 """
 
 import argparse
+import sys
 
 from clinicbot import store
 from clinicbot.chunking import chunk_directory
@@ -69,10 +72,50 @@ def cmd_chat(args) -> None:
             ask(question, args)
 
 
+def cmd_agent(args) -> None:
+    from clinicbot.agent import Agent
+
+    def approve(name: str, arguments: dict) -> bool:
+        if args.yes:
+            return True
+        print(f"\n  [approval needed] {name} {arguments}")
+        return input("  Allow? [y/N] ").strip().lower() in {"y", "yes"}
+
+    trace = None if args.quiet else (lambda line: print(f"  [tool] {line}"))
+    agent = Agent(approve=approve, trace=trace)
+
+    # Each item is one user turn; pass several to script a conversation.
+    if args.message:
+        for text in args.message:
+            print(f"\nyou> {text}")
+            print(f"bot> {agent.send(text)}")
+        return
+
+    print("ClinicBot agent ready. Try: 'Book me with the dentist on Friday' (or 'quit').")
+    while True:
+        try:
+            text = input("\nyou> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if text.lower() in {"quit", "exit", "q"}:
+            break
+        if text:
+            print(f"bot> {agent.send(text)}")
+
+
+def cmd_reset_db(_args) -> None:
+    from clinicbot import clinic_db
+
+    clinic_db.reset()
+    print(f"Recreated {clinic_db.DB_PATH} with fresh sample bookings.")
+
+
 def cmd_eval(args) -> None:
     from clinicbot import evaluate
 
-    if args.answers:
+    if args.agent:
+        evaluate.eval_agent()
+    elif args.answers:
         evaluate.eval_answers(args.k, args.mode)
     else:
         modes = [args.only] if args.only else list(MODES)
@@ -103,12 +146,24 @@ def main() -> None:
         p.add_argument("--sources", action="store_true", help="show retrieved chunks")
         p.set_defaults(func=func)
 
+    p = sub.add_parser("agent")
+    p.add_argument("-m", "--message", action="append", help="send a message (repeatable)")
+    p.add_argument("--yes", action="store_true", help="auto-approve bookings/cancellations")
+    p.add_argument("--quiet", action="store_true", help="hide tool call trace")
+    p.set_defaults(func=cmd_agent)
+
+    sub.add_parser("reset-db").set_defaults(func=cmd_reset_db)
+
     p = sub.add_parser("eval")
     add_retrieval_args(p)
     p.add_argument("--answers", action="store_true", help="grade final answers (slow)")
+    p.add_argument("--agent", action="store_true", help="grade agent tool use (slow)")
     p.add_argument("--only", choices=MODES, help="evaluate a single mode")
     p.add_argument("--misses", choices=MODES, help="list failed questions for a mode")
     p.set_defaults(func=cmd_eval)
+
+    # Windows consoles default to cp1252, which can't print emoji LLMs like to use.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
     args = parser.parse_args()
     args.func(args)

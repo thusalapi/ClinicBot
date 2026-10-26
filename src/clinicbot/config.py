@@ -42,3 +42,8 @@ RRF_K = 60
 LLM_PROVIDER = os.getenv("CLINICBOT_PROVIDER", "ollama")
 OLLAMA_MODEL = os.getenv("CLINICBOT_OLLAMA_MODEL", "qwen3:4b")
 CLAUDE_MODEL = os.getenv("CLINICBOT_MODEL", "claude-opus-5-5")
+
+# --- Agent (Phase 3) ----------------------------------------------------------
+# Whether Qwen3 reasons before choosing tools. Without it, Qwen3 4B sometimes
+# *said* it booked an appointment without calling book_appointment.
+AGENT_THINK = os.getenv("CLINICBOT_AGENT_THINK", "true").lower() == "true"

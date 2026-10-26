@@ -94,6 +94,56 @@ def eval_retrieval(k: int, modes: list[str], show_misses: str | None) -> None:
     print("\n(per-type columns are recall@k hits/total)")
 
 
+AGENT_FILE = PROJECT_ROOT / "data" / "eval" / "agent_scenarios.jsonl"
+
+
+def eval_agent() -> None:
+    """Trajectory eval: did the agent call the right tools (and avoid the wrong ones)?
+
+    Every side-effect tool call is *denied*, so running the eval never changes
+    the booking database. We still see that the agent tried, which is what
+    we're grading.
+    """
+    from clinicbot.agent import Agent
+
+    with AGENT_FILE.open(encoding="utf-8") as f:
+        scenarios = [json.loads(line) for line in f if line.strip()]
+    print(f"Agent eval: {len(scenarios)} scenarios (side effects auto-denied)\n")
+
+    passed = 0
+    for i, sc in enumerate(scenarios, start=1):
+        agent = Agent(approve=lambda name, args: False)
+        reply = agent.send(sc["message"])
+        called = [r.name for r in agent.tool_log]
+        problems = []
+
+        for expected in sc["must_call"]:
+            if not any(alt in called for alt in expected.split("|")):
+                problems.append(f"did not call {expected}")
+        for forbidden in sc["must_not_call"]:
+            if forbidden in called:
+                problems.append(f"called forbidden {forbidden}")
+        for tool, expected_args in sc.get("args", {}).items():
+            calls = [r.arguments for r in agent.tool_log if r.name == tool]
+            if calls and not any(
+                all(str(a.get(key)) == str(val) for key, val in expected_args.items())
+                for a in calls
+            ):
+                problems.append(f"{tool} args {calls} don't match {expected_args}")
+        for fact in sc["reply_must_include"]:
+            if fact.lower() not in reply.lower():
+                problems.append(f"reply missing {fact!r}")
+
+        passed += not problems
+        print(f"[{i:>2}/{len(scenarios)}] {'PASS' if not problems else 'FAIL'}  {sc['message']}")
+        print(f"         tools: {called or '(none)'}")
+        for p in problems:
+            print(f"         - {p}")
+        if problems:
+            print("         reply: " + reply.replace("\n", " ")[:250])
+    print(f"\nAgent accuracy: {passed}/{len(scenarios)} = {passed / len(scenarios):.0%}")
+
+
 def eval_answers(k: int, mode: str) -> None:
     from clinicbot.generate import answer
 

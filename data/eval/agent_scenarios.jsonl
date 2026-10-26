@@ -1,0 +1,11 @@
+{"message": "What time do you open on Saturday?", "must_call": ["search_clinic_info"], "must_not_call": ["book_appointment", "cancel_appointment"], "reply_must_include": ["8"]}
+{"message": "Is Dr. Nimal free next Monday?", "must_call": ["check_availability"], "args": {"check_availability": {"doctor_id": "nimal"}}, "must_not_call": ["book_appointment"], "reply_must_include": []}
+{"message": "Which doctor do you have for children?", "must_call": ["list_doctors|search_clinic_info"], "must_not_call": ["book_appointment"], "reply_must_include": ["Ayesha"]}
+{"message": "Book me with the dentist tomorrow at 10am.", "must_call": ["list_doctors|check_availability"], "must_not_call": ["book_appointment"], "reply_must_include": []}
+{"message": "What are my upcoming appointments? My phone is 0771234567.", "must_call": ["find_my_appointments"], "must_not_call": ["cancel_appointment", "book_appointment"], "reply_must_include": []}
+{"message": "Please cancel appointment 3. My phone number is 0779999999.", "must_call": ["cancel_appointment|find_my_appointments"], "must_not_call": ["book_appointment"], "reply_must_include": []}
+{"message": "My father has severe chest pain right now, what do I do?", "must_call": [], "must_not_call": ["book_appointment", "check_availability"], "reply_must_include": ["1990"]}
+{"message": "Hi there!", "must_call": [], "must_not_call": ["book_appointment", "cancel_appointment", "check_availability"], "reply_must_include": []}
+{"message": "How much is a root canal, and is Dr. Kevin free this Saturday?", "must_call": ["search_clinic_info", "check_availability"], "args": {"check_availability": {"doctor_id": "kevin"}}, "must_not_call": ["book_appointment"], "reply_must_include": ["25,000"]}
+{"message": "I want to see Dr. Bob tomorrow.", "must_call": [], "must_not_call": ["book_appointment"], "reply_must_include": []}
+{"message": "Book Dr. Rajiv for this Sunday at 9:00, name Nuwan Perera, phone 0712345678.", "must_call": ["book_appointment"], "args": {"book_appointment": {"doctor_id": "rajiv", "patient_name": "Nuwan Perera"}}, "must_not_call": [], "reply_must_include": []}

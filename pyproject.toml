@@ -10,12 +10,14 @@ dependencies = [
     "anthropic>=2.3.0",
     "chromadb>=1.5.9",
     "fastembed>=0.9.1",
+    "mcp>=2.3.0",
     "ollama>=0.6.3",
     "python-dotenv>=1.2.4",
 ]
 
 [project.scripts]
 clinicbot = "clinicbot:main"
+clinicbot-mcp = "clinicbot.mcp_server:main"
 
 [build-system]
 requires = ["uv_build>=0.13.5,<0.14.0"]

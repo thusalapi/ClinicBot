@@ -13,3 +13,4 @@ wheels/
 .env
 data/vectordb/
 data/models/
+data/clinic.db
